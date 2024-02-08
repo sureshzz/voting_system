@@ -19,6 +19,7 @@ from django.urls import path
 from users import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.home,name="home")
-    # path('register/',views.register,name="register")
+    path('',views.home,name="home"),
+    path('register/',views.register,name="register"),
+    path('auth/',views.auth,name="vote")
 ]
