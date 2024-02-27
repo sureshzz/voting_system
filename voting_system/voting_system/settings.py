@@ -37,8 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users'
+    'users',
+    'rest_framework'
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ],
+}
+
+JWT_AUTH = {
+    'JWT_SECRET_KEY': '7@5?MLPwL7d3P^e9b%9!kJK7NrXGgq&Z',  # Replace with a secret key for signing JWTs
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
