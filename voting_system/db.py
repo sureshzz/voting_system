@@ -1,6 +1,6 @@
 import pymongo
 
-url = "mongodb+srv://sureshthapamagar8914:43Kg9rFNlQuyZRHb@cluster0.69fzi09.mongodb.net/"
+url = "mongodb://localhost:27017/"
 client = pymongo.MongoClient(url)
 
 db = client['majordb']

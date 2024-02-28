@@ -17,9 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from users import views
+from registration import views as registration_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home,name="home"),
-    path('register/',views.register,name="register"),
-    path('auth/',views.auth,name="vote")
+    path('register/',registration_views.register,name="register"),
+    path('cregister/',views.cregister,name="cregister"),
+    path('auth/',views.auth,name="auth"),
+    path('vote/',views.vote,name="vote"),
+    path('cinfo/',views.cinfo,name="cinfo"),
+    # path('click/',registration_views.click,name="click"),
 ]
