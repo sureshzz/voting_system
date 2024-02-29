@@ -120,6 +120,7 @@ def vote(request):
             data = json.loads(request.body)
             group = data.get('group')
             username = data.get('username')
+            candidate_name = data.get('candidate_name')
             print(username)
             print(group)
         except json.JSONDecodeError:
@@ -131,7 +132,8 @@ def vote(request):
         # Proceed with your vote logic using the authenticated user (request.user)
             dict ={
                 'group':group,
-                'userame':username
+                'userame':username,
+                'candidate_name':candidate_name
             }
             result = votes_collection.insert_one(dict)
             print(result)
@@ -186,3 +188,22 @@ def cinfo(request):
 
         # Return JSON response with the serialized data
         return JsonResponse(json_data, safe=False)
+    
+
+def votecount(request):
+    if request.method == 'GET':
+        
+        # Define the aggregation pipeline
+        pipeline = [
+            {"$group": {"_id": "$group", "total_votes": {"$sum": 1}}}
+        ]
+
+        # Execute the aggregation pipeline
+        result = list(votes_collection.aggregate(pipeline)) 
+        print(result)
+        count = json.dumps(result)
+        print(count)
+        return JsonResponse({"count": count})
+    else:
+        return HttpResponse("invalid request")
+    

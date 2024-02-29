@@ -26,5 +26,6 @@ urlpatterns = [
     path('auth/',views.auth,name="auth"),
     path('vote/',views.vote,name="vote"),
     path('cinfo/',views.cinfo,name="cinfo"),
+    path('votecount/',views.votecount,name="votecount"),
     # path('click/',registration_views.click,name="click"),
 ]
