@@ -5,8 +5,8 @@ from db import db
 
 class users(models.Model):
     username = models.CharField(max_length=128)
-    fingerid = models.CharField(max_length=128)
-    imageid = models.CharField(max_length=128)
+    fingerid = models.IntegerField()
+    imageid = models.CharField(max_length=128 * 100)
     # uid = models.CharField(max_length=200)
     # Add other fields as neededs needed
 
@@ -25,6 +25,8 @@ class votes(models.Model):
 class candidates(models.Model):
     name = models.CharField(max_length=128)
     flag = models.CharField(max_length=128)
+
+
 
 
 users_collection = db['users']

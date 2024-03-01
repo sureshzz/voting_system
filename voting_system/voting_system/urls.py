@@ -20,6 +20,7 @@ from users import views
 from registration import views as registration_views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('get/', views.get),
     path('',views.home,name="home"),
     path('register/',registration_views.register,name="register"),
     path('cregister/',views.cregister,name="cregister"),
@@ -27,5 +28,7 @@ urlpatterns = [
     path('vote/',views.vote,name="vote"),
     path('cinfo/',views.cinfo,name="cinfo"),
     path('votecount/',views.votecount,name="votecount"),
+    path('delete/',views.deletecandidate,name="votecount"),
+    path('adminlogin/',views.adminlogin,name="adminlogin"),
     # path('click/',registration_views.click,name="click"),
 ]

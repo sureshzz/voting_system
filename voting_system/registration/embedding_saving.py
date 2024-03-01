@@ -12,7 +12,7 @@ def save_embedding():
 
     #loading the captured image file and handling error if the image fie doesnot exists
     try:
-        image= face_recognition.load_image_file("captured_image.jpg")
+        image= face_recognition.load_image_file("image.jpg")
 
     except FileNotFoundError:
         root = Tk()

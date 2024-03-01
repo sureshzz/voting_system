@@ -16,47 +16,16 @@ from .serializers import UserLoginSerializer
 import jwt
 from .models import votes_collection
 from .models import candidates_collection
+import face_recognition
+from .models import admin_collection
+from .models import users_collection
+
 
 
 # Create your views here.
 def home(request):
   return HttpResponse('hello sohan')
         
-# @csrf_exempt
-# def register(request):
-#     # if request.method == 'GET':
-#     #     # Retrieve CSRF token for GET request
-#     #     csrf_token = get_token(request)
-#     #     response = JsonResponse({'message': 'CSRF token retrieved successfully'})
-#     #     response['X-CSRFToken'] = csrf_token  # Add CSRF token to response headers
-#     #     return response
-       
-#     if request.method == 'POST':
-#         print(request, request.method)
-#         # Retrieve data from POST request
-#         try:
-#             data = json.loads(request.body)
-#             print(data)
-#             username = data.get('username')
-#             fingerid = data.get('fingerid')
-#             imageid = data.get('imageid')
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
-#         # Check if required fields are present
-#         if fingerid is None or imageid is None or username is None:
-#             return JsonResponse({'error': 'Missing required fields'}, status=400)
-        
-#         # Create dictionary with user data
-#         user_data = {'fingerid': fingerid, 'imageid': imageid,'username':username}
-        
-#         # Insert data into MongoDB collection
-#         users_collection.insert_one(user_data)
-        
-#         return JsonResponse({'message': 'User registered successfully'}, status=201)
-    
-#     else:
-#         return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
     
 
 
@@ -91,15 +60,30 @@ def home(request):
 #             'imageid':user.imageid  
 #         }
 #
-@csrf_exempt
-@api_view(['POST'])
-def auth(request):
-    if request.method == 'POST':
-        serializer = UserLoginSerializer(data=request.data)
-        if serializer.is_valid():
-            return Response(serializer.validated_data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# def get(request):
+#     if request.method == 'GET':
+#         filter = {"fingerid": fingerid}
+#         data = users_collection.find(filter)
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import users  # Import your users model here
+import face_recognition
+import numpy as np
+
+
+
+import face_recognition
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import users  # Import your users model here
+import numpy as np
+import jwt
+
+
+
+
 
 
 @csrf_exempt
@@ -207,3 +191,12 @@ def votecount(request):
     else:
         return HttpResponse("invalid request")
     
+from django.http import JsonResponse
+import json
+
+
+
+
+
+
+        
