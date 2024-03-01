@@ -2,6 +2,7 @@ from django.http import HttpResponse ,JsonResponse
 from users.models import users_collection
 from django.views.decorators.csrf import csrf_exempt
 import face_recognition
+from users.models import users_collection
 
 
 @csrf_exempt

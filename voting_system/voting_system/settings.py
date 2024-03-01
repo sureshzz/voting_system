@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'login',
     'registration',
-    'corsheaders'
+    'corsheaders',
+    'superadmin',
+    'candidates'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

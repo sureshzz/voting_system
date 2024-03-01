@@ -1,98 +1,21 @@
-from django.shortcuts import render
 from django.http import HttpResponse ,JsonResponse
-from .models import users_collection
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.middleware.csrf import get_token
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-from users.models import users
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes                         
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import UserLoginSerializer
 import jwt
 from .models import votes_collection
-from .models import candidates_collection
-import face_recognition
-from .models import admin_collection
-from .models import users_collection
+from users.models import votes_collection
 
 
 
 # Create your views here.
 def home(request):
   return HttpResponse('hello sohan')
-        
-    
-
-
-
-# Define the authenticate_finger_id function outside of the view funct
-    
-# @csrf_exempt
-# def auth(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             print(data)
-#             fingerid = data.get('fingerid')
-#             print(fingerid)
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
-#         if fingerid is None:
-#             return JsonResponse({'error': 'Missing required fields'}, status=400)
-
-#         # Move the authentication check inside the POST block
-#         user = authenticate_finger_id(fingerid)
-#         print("outside auth")
-#         if user is None:
-#             print("hereeeeeeeeee")
-#             return JsonResponse({'error': 'Authentication failed'}, status=401)
-
-#         # Generate JWT token
-#         payload = {
-#             'username':user.username,
-#             'fingerid':user.fingerid,
-#             'imageid':user.imageid  
-#         }
-#
-
-# def get(request):
-#     if request.method == 'GET':
-#         filter = {"fingerid": fingerid}
-#         data = users_collection.find(filter)
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import users  # Import your users model here
-import face_recognition
-import numpy as np
-
-
-
-import face_recognition
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import users  # Import your users model here
-import numpy as np
-import jwt
-
-
-
-
-
 
 @csrf_exempt
 def vote(request):
     # Only authenticated users can access this view due to IsAuthenticated permission
     if request.method == 'POST':
         try:
-            # headers = request.headers
-            # print(headers)
             received_token = request.headers.get("token")
             print(received_token)
             secretkey = "abc"
@@ -123,55 +46,7 @@ def vote(request):
             print(result)
             return JsonResponse({"status": "200"})
 
-@csrf_exempt
-def cregister(request):   
-    if request.method == 'POST':
-        print(request, request.method)
-        # Retrieve data from POST request
-        try:
-            data = json.loads(request.body)
-            print(data)
-            name = data.get('name')
-            flag = data.get('flag')
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
-        # Check if required fields are present
-        if name is None or flag is None:
-            return JsonResponse({'error': 'Missing required fields'}, status=400)
-        
-        # Create dictionary with user data
-        user_data = {'name': name, 'flag': flag}
-        
-        # Insert data into MongoDB collection
-        candidates_collection.insert_one(user_data)
-        
-        return JsonResponse({'message': 'candidate registered successfully'}, status=201)
-    
-    else:
-        return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
-    
-
-import json
-
-def cinfo(request):
-    if request.method == 'GET':
-        # Retrieve all documents from the users collection
-        all_documents = candidates_collection.find()
-
-        # Convert documents to a list of dictionaries
-        document_list = [document for document in all_documents]
-        print(document_list)
-
-        # Convert ObjectId to string in each document
-        for document in document_list:
-            document['_id'] = str(document['_id'])
-
-        # Serialize the document list to JSON
-        json_data = json.dumps(document_list)
-
-        # Return JSON response with the serialized data
-        return JsonResponse(json_data, safe=False)
     
 
 def votecount(request):
@@ -191,9 +66,6 @@ def votecount(request):
     else:
         return HttpResponse("invalid request")
     
-from django.http import JsonResponse
-import json
-
 
 
 

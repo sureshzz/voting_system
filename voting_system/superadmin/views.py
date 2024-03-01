@@ -1,29 +1,17 @@
 from django.shortcuts import render
+
+# Create your views here.
+from django.shortcuts import render
 from django.http import HttpResponse ,JsonResponse
-from models import admin_collection
+from superadmin.models import admin_collection
 import json
 from django.views.decorators.csrf import csrf_exempt
 import jwt
-from users.models import candidates_collection
+from candidates.models import candidates_collection
 
-# Create your views here.
-@csrf_exempt
-def deletecandidate(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        name = data.get('name')
-        filter = {'name': name}
-        result = candidates_collection.delete_one(filter)
 
-        if result.deleted_count == 1:
-            return JsonResponse({'message': 'Document deleted successfully.'})
-        else:
-            return JsonResponse({'error': 'Document not found or could not be deleted.'}, status=404)
-    else:
-        return JsonResponse({'error': 'Task is not supported'}, status=405)
-    
 
-from django.http import JsonResponse
+
 
 @csrf_exempt
 def adminlogin(request):
@@ -51,3 +39,26 @@ def adminlogin(request):
 
     # Return a 405 Method Not Allowed response if the request method is not POST
     return JsonResponse({"error": "Method Not Allowed"}, status=405)
+
+# Create your views here.
+@csrf_exempt
+def deletecandidate(request):
+    if request.method == 'POST':
+        received_token = request.headers.get('token')
+        decoded_token = jwt.decode(received_token,'suresh',algorithms=['HS256'])
+        validater = decoded_token['role']
+        data = json.loads(request.body)
+        name = data.get('name')
+        filter = {'name': name}
+        if validater == 'admin':
+            result = candidates_collection.delete_one(filter)
+            return JsonResponse("done")
+
+        if result.deleted_count == 1:
+            return JsonResponse({'message': 'Document deleted successfully.'})
+        else:
+            return JsonResponse({'error': 'Document not found or could not be deleted.'}, status=404)
+    else:
+        return JsonResponse({'error': 'Task is not supported'}, status=405)
+    
+
