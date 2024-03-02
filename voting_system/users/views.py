@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import jwt
 from .models import votes_collection
-from users.models import votes_collection
+from users.models import votes_collection,users_collection
 
 
 
@@ -54,26 +54,48 @@ def vote(request):
             print(result)
             return JsonResponse({"status": "200"})
 
-
-    
-
 def votecount(request):
     if request.method == 'GET':
-        
-        # Define the aggregation pipeline
-        pipeline = [
-            {"$group": {"_id": "$group", "total_votes": {"$sum": 1}}}
-        ]
+        try:
+            # Total voters aggregation
+            total_voters = list(users_collection.objects.aggregate([
+                {
+                    '$facet': {
+                        'pipeline1': [
+                            {'$group': {'_id': '$Citizenshipnum', 'totalvoters': {'$sum': 1}}}
+                        ],
+                        # Add more pipelines for Model1 as needed
+                    }
+                }
+            ]))
 
-        # Execute the aggregation pipeline
-        result = list(votes_collection.aggregate(pipeline)) 
-        print(result)
-        count = json.dumps(result)
-        print(count)
-        return JsonResponse({"count": count})
-    else:
-        return HttpResponse("invalid request")
-    
+            # Today's votes aggregation
+            today_votes = list(votes_collection.objects.aggregate([
+                {
+                    '$facet': {
+                        'pipeline2': [
+                            {'$group': {'_id': '$Date', 'todayvotes': {'$sum': 1}}}
+                        ],
+                        # Add more pipelines for Model1 as needed
+                    }
+                }
+            ]))
+
+            # Party-wise votes aggregation
+            pipeline = [
+                {"$group": {"_id": "$Party", "votesperparty": {"$sum": 1}}}
+            ]
+            party_votes = list(votes_collection.aggregate(pipeline))
+
+            return JsonResponse({
+                "total_voters": total_voters,
+                "today_votes": today_votes,
+                "party_votes": party_votes
+            })
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
 
 
 
