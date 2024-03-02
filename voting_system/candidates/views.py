@@ -26,11 +26,14 @@ def cregister(request):
                     'Address': Address,
                     'Party': Party
                      }
-        
-        # Insert data into MongoDB collection
-        candidates_collection.insert_one(user_data)
-        
-        return JsonResponse({'message': 'candidate registered successfully'}, status=201)
+        duplicate = {"Citizenshipnum":Citizenshipnum}
+        existingdoc = candidates_collection.find_one(duplicate)
+        if existingdoc:
+            return JsonResponse("existing values already existed")
+        else:    
+            candidates_collection.insert_one(user_data)
+            
+            return JsonResponse({'message': 'candidate registered successfully'}, status=201)
     
     else:
         return JsonResponse({'error': 'candidate couldnot be registered'}, status=405)

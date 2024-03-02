@@ -42,17 +42,23 @@ def vote(request):
         
         if Party is None or Candidatename is None:
             return JsonResponse({'error': 'Missing required fields'}, status=400)
-        if validater == 'voter':
-        # Proceed with your vote logic using the authenticated user (request.user)
-            dict ={
-                'Party':Party,
-                'Citizenshipnum':Citizenshipnum,
-                'Candidatename':Candidatename,
-                'Candidatenum':Candidatenum
-            }
-            result = votes_collection.insert_one(dict)
-            print(result)
-            return JsonResponse({"status": "200"})
+        duplicate = {"Citizenshipnum":Citizenshipnum}
+        existingdoc = votes_collection.find_one(duplicate)
+        if existingdoc:
+            return JsonResponse("existing values already existed")
+        else:
+            if validater == 'voter':
+            # Proceed with your vote logic using the authenticated user (request.user)
+                dict ={
+                    'Party':Party,
+                    'Citizenshipnum':Citizenshipnum,
+                    'Candidatename':Candidatename,
+                    'Candidatenum':Candidatenum,
+                    'Date':Date
+                }
+                result = votes_collection.insert_one(dict)
+                print(result)
+                return JsonResponse({"status": "200"})
 
 def votecount(request):
     if request.method == 'GET':

@@ -37,23 +37,27 @@ def register(request):
                 # If no faces are detected, return an error response
                 return JsonResponse({'error': 'No faces found in the image'}, status=400)
             
-            
-            # Insert each face encoding into the MongoDB collection
-            for encoding in face_encodings:
-                encoding_dict = {'Firstname': Firstname,
-                                 'Middlename': Middlename,
-                                 'Lastname': Lastname,
-                                 'Citizenshipnum': Citizenshipnum,
-                                 'Address': Address,
-                                 'Dateofbirth': Date_of_birth,
-                                 'Gender': Gender,
-                                 'encoding': encoding.tolist(),
-                                 'fingerid': fingerid}
-                print(encoding_dict)
+            existingdoc = users_collection.find_one(Citizenshipnum)
+            if existingdoc:
+                return JsonResponse("existing values already existed")
+            else:
 
-                users_collection.insert_one(encoding_dict)
-            
-            return JsonResponse({'title': "done"})
+            # Insert each face encoding into the MongoDB collection
+                for encoding in face_encodings:
+                    encoding_dict = {'Firstname': Firstname,
+                                        'Middlename': Middlename,
+                                        'Lastname': Lastname,
+                                        'Citizenshipnum': Citizenshipnum,
+                                        'Address': Address,
+                                        'Dateofbirth': Date_of_birth,
+                                        'Gender': Gender,
+                                        'encoding': encoding.tolist(),
+                                        'fingerid': fingerid}
+                    print(encoding_dict)
+
+                    users_collection.insert_one(encoding_dict)
+                
+                return JsonResponse({'title': "done"})
 
     else:
         return JsonResponse({'error': 'Only POST requests are allowed.'}, status=405)

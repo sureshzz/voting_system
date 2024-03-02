@@ -22,7 +22,7 @@ from candidates import views as candidates_views
 from login import views as login_views
 
 urlpatterns = [
-    path('',views.home,name="home"),
+    path('adminsignup/',admin_views.adminsignup,name="home"),
     path('register/',registration_views.register,name="register"),
     path('cregister/',candidates_views.cregister,name="cregister"),
     path('auth/',login_views.auth,name="auth"),
