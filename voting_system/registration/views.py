@@ -8,11 +8,14 @@ from users.models import users_collection
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
+        Firstname = request.POST.get('Firstname')
+        Middlename = request.POST.get('Middlename')
+        Lastname = request.POST.get('Lastname')
+        Citizenshipnum = request.POST.get('citizenshipnum')
+        Address = request.POST.get('Address')
+        Date_of_birth = request.POST.get('Date_of_birth')
+        Gender = request.POST.get('Gender')
         fingerid = request.POST.get('fingerid')
-        # content = request.POST.get('FirstName')
-        # print(content.FirstName)
-        # print(content)
-        print("hello")
         image_file = request.FILES.get('imageid')
         print("image_file", image_file)
         
@@ -37,7 +40,15 @@ def register(request):
             
             # Insert each face encoding into the MongoDB collection
             for encoding in face_encodings:
-                encoding_dict = {'encoding': encoding.tolist(),'fingerid': fingerid}
+                encoding_dict = {'Firstname': Firstname,
+                                 'Middlename': Middlename,
+                                 'Lastname': Lastname,
+                                 'Citizenshipnum': Citizenshipnum,
+                                 'Address': Address,
+                                 'Dateofbirth': Date_of_birth,
+                                 'Gender': Gender,
+                                 'encoding': encoding.tolist(),
+                                 'fingerid': fingerid}
                 print(encoding_dict)
 
                 users_collection.insert_one(encoding_dict)
@@ -50,53 +61,7 @@ def register(request):
     return JsonResponse({"status": "done"})
 
         
-# def save_embedding(image_data):
-#     try:
-#         image = image_data
-#         image_binary = base64.b64decode(image_data)
-#     #storing embeds
-#         result = embedd_collection.insert_one({"image":image_binary})
-#         if result.inserted_id:
-#             return JsonResponse({'message': 'Image encoding saved successfully',}, status=201),image_binary
-#         else:
-#             return JsonResponse({'error': 'Failed to save image encoding'}, status=500)
-#     except Exception as e:
-#         return JsonResponse({'error': str(e)}, status=500)
 
-# @csrf_exempt
-# def register(request):
-#     if request.method == 'POST':
-#         print(request, request.method)
-#         # Retrieve data from POST reques
-#         try:
-#             data = json.loads(request.body)
-#             username = data.get('username')
-#             fingerid = data.get('fingerid')
-#             imageid = data.get('imageid')
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-
-#         # Check if required fields are present
-#         if fingerid is None or imageid is None or username is None:
-#             return JsonResponse({'error': 'Missing required fields'}, status=400)  
-#         print(imageid) 
-#         image_data = imageid
-#         with open('./image.jpg', 'wb') as f:
-#             for chunk in imageid.chunks():
-#                 f.write(chunk)
-#         # Generate face embeddings
-#         face_embeddings = generate_face_embeddings(image_data)
-
-#         # Create dictionary with user data
-#         user_data = {'fingerid': fingerid, 'imageid': face_embeddings,'username':username}
-        
-#         # Insert data into MongoDB collection
-#         users_collection.insert_one(user_data)
-            
-#         return JsonResponse({'message': 'User registered successfully'}, status=201)
-    
-#     else:
-#         return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
 
 
 

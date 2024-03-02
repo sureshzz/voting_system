@@ -3,8 +3,12 @@ from db import db
 
 # Create your models here.
 class candidates(models.Model):
-    name = models.CharField(max_length=128)
-    flag = models.CharField(max_length=128)
+    Firstname = models.CharField(max_length=128)
+    Middlename = models.CharField(max_length=128)
+    Citizenshipnum = models.CharField(max_length=128)
+    Address = models.CharField(max_length=128)
+    Gender = models.CharField(max_length=128)
+    Party = models.CharField(max_length=128)
 
 
 candidates_collection = db['candidates']

@@ -9,7 +9,7 @@ from users.models import votes_collection
 
 # Create your views here.
 def home(request):
-  return HttpResponse('hello sohan')
+  return HttpResponse('hello broda')
 
 @csrf_exempt
 def vote(request):
@@ -30,24 +30,25 @@ def vote(request):
             # actual_token = decoded_token.split(' ')[1]
             print("decoded_token:",decoded_token)
             validater = decoded_token['role']
-            username = decoded_token['username']
+            Citizenshipnum = decoded_token['Citizenshipnum']
             print(validater)
             data = json.loads(request.body)
-            group = data.get('group')
-            candidate_name = data.get('candidate_name')
-            print(username)
-            print(group)
+            Party = data.get('Party')
+            Date = data.get('Date')
+            Candidatenum = data.get('Candidatecitizenshipnum')
+            Candidatename = data.get('Candidatename')
         except json.JSONDecodeError:
             return JsonResponse({'error':'Invalid JSON data'}, status=400)
         
-        if group is None:
+        if Party is None or Candidatename is None:
             return JsonResponse({'error': 'Missing required fields'}, status=400)
         if validater == 'voter':
         # Proceed with your vote logic using the authenticated user (request.user)
             dict ={
-                'group':group,
-                'userame':username,
-                'candidate_name':candidate_name
+                'Party':Party,
+                'Citizenshipnum':Citizenshipnum,
+                'Candidatename':Candidatename,
+                'Candidatenum':Candidatenum
             }
             result = votes_collection.insert_one(dict)
             print(result)
