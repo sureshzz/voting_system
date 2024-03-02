@@ -20,6 +20,7 @@ class ImageEmbedding(models.Model):
 class votes(models.Model):
     username = models.CharField(max_length=128)
     group = models.CharField(max_length=128)
+    candidate_name = models.CharField(max_length=128)
     # Add other fields as neededs needed
 
 

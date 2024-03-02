@@ -16,17 +16,24 @@ def vote(request):
     # Only authenticated users can access this view due to IsAuthenticated permission
     if request.method == 'POST':
         try:
-            received_token = request.headers.get("token")
-            print(received_token)
+            received_token = request.headers.get("Authorization")
+            parts = received_token.split()
+            if len(parts) != 2 or parts[0].lower() != 'bearer':
+        # Handle case where Authorization header is not in the expected format
+                return JsonResponse({'error': 'Invalid Authorization header format'}, status="error")
+
+            # Extract the token from the Authorization header
+            extracted_token = parts[1]
+            print(extracted_token)
             secretkey = "abc"
-            decoded_token = jwt.decode(received_token,secretkey,algorithms=['HS256'])
+            decoded_token = jwt.decode(extracted_token,secretkey,algorithms=['HS256'])
             # actual_token = decoded_token.split(' ')[1]
             print("decoded_token:",decoded_token)
             validater = decoded_token['role']
+            username = decoded_token['username']
             print(validater)
             data = json.loads(request.body)
             group = data.get('group')
-            username = data.get('username')
             candidate_name = data.get('candidate_name')
             print(username)
             print(group)

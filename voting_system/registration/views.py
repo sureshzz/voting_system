@@ -9,9 +9,9 @@ from users.models import users_collection
 def register(request):
     if request.method == 'POST':
         fingerid = request.POST.get('fingerid')
-        content = request.POST.get('FirstName')
+        # content = request.POST.get('FirstName')
         # print(content.FirstName)
-        print(content)
+        # print(content)
         print("hello")
         image_file = request.FILES.get('imageid')
         print("image_file", image_file)

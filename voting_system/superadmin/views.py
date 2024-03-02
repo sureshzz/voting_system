@@ -1,7 +1,4 @@
 from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
 from django.http import HttpResponse ,JsonResponse
 from superadmin.models import admin_collection
 import json
@@ -60,5 +57,37 @@ def deletecandidate(request):
             return JsonResponse({'error': 'Document not found or could not be deleted.'}, status=404)
     else:
         return JsonResponse({'error': 'Task is not supported'}, status=405)
+    
+@csrf_exempt
+def updatecandidate(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        id = data.get('candidateid')
+        candidate_name = data.get('name')
+        flag = data.get('flag')
+
+        filter= {"id":id}
+
+        update = {
+            "$set": {
+                "field_to_update": candidate_name,
+                  "flag" :flag  # Replace with the field and new value to update
+            }
+        }
+
+        result =  candidates_collection.update_one(filter,update)
+        
+                # Check if the document was successfully updated
+        if result.modified_count == 1:
+            print("Document updated successfully.")
+        else:
+            print("No matching document found or document was not updated.")
+    else:
+        return JsonResponse ({"cannot update candidate"})
+                 
+                 
+            
+
+
     
 
