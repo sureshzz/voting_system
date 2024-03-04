@@ -7,7 +7,7 @@ class users(models.Model):
     Firstname = models.CharField(max_length=128)
     Middlename = models.CharField(max_length=128)
     Lastname = models.CharField(max_length=128)
-    Citizenshipnum = models.IntegerField(max_length=128)
+    Citizenshipnum = models.CharField(max_length=128)
     Address = models.CharField(max_length=128)
     Date_of_birth = models.CharField(max_length=128)
     Gender = models.CharField(max_length=128)

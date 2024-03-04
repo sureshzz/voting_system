@@ -11,7 +11,7 @@ def auth(request):
     if request.method == 'POST':   
         Citizenshipnum = request.POST.get('Citizenshipnum')
         Fingerid = request.POST.get('Fingerid')
-        image_file = request.FILES.get('Image')
+        image_file = request.FILES.get('Imageid')
 
         if image_file:
             with open('./' + image_file.name, 'wb') as destination:
@@ -29,36 +29,16 @@ def auth(request):
 
             unknown_encoding = face_encodings[0]  # Assuming only one face is detected
 
-
-            vfilter = {'Citizenshipnum':Citizenshipnum}
+            vfilter = {'Citizenshipnum': Citizenshipnum}
             vdocument = votes_collection.find_one(vfilter)
-            if vdocument is None:
-            # Define the authenticate_finger_id function
-                def authenticate_finger_id(Fingerid):
-                    filter = {'fingerid': Fingerid}      
-                    document = users_collection.find_one(filter)
-                    if document:
-                        Citizenshipnum = document.get('Citizenshipnum')
-                        db_embedding = np.array(document.get('encoding'))
-                        result = compare_embeddings(db_embedding, unknown_encoding)
-                        if result:
-                            payload = {'Citizenshipnum': Citizenshipnum, 'role': "voter"}
-                            secretkey = "abc"
-                            token = jwt.encode(payload, secretkey, algorithm='HS256')
-                            return token
-                        else:
-                            return JsonResponse("fingerprint is not matched")
-                    else:
-                        return JsonResponse("please sign up first!!")
+            if vdocument:
+                return JsonResponse({"error": "You have already voted"})
             else:
-                return JsonResponse("you cannot vote now")
-            # Call the authenticate_finger_id function
-            result = authenticate_finger_id(Fingerid)
-
-            if result:
-                return JsonResponse({'token': result})
-            else:
-                return JsonResponse({'error': 'Authentication failed'}, status=401)
+                result = authenticate_finger_id(Fingerid, unknown_encoding)
+                if result.get('token'):
+                    return JsonResponse({'message': result.get('message'), 'token': result.get('token')})
+                else:
+                    return JsonResponse({'error': result.get('error')}, status=401)
 
         else:
             return JsonResponse({'error': 'No image file provided'}, status=400)
@@ -66,7 +46,25 @@ def auth(request):
     else:
         return JsonResponse({'error': 'Only POST requests are allowed.'}, status=405)
 
-def compare_embeddings(db_embedding, unknown_encoding, tolerance=0.4):
-    # Compare the embeddings with others
-    result = face_recognition.compare_faces([db_embedding], unknown_encoding, tolerance=tolerance)
+def authenticate_finger_id(Fingerid, unknown_encoding):
+    filter = {'Fingerid': Fingerid}      
+    document = users_collection.find_one(filter)
+    if document:
+        Citizenshipnum = document.get('Citizenshipnum')
+        db_encoding = np.array(document.get('Encoding'))
+        result = compare_embeddings(db_encoding, unknown_encoding)
+        if result:
+            payload = {'Citizenshipnum': Citizenshipnum, 'role': "voter"}
+            secretkey = "abc"
+            token = jwt.encode(payload, secretkey, algorithm='HS256')
+            return {'message': 'You are logged in', 'token': token}
+        else:
+            return {'error': 'Face is not recognized'}
+    else:
+        return {'error': 'Fingerprint does not match'}
+
+def compare_embeddings(db_encoding, unknown_encoding, tolerance=0.4):
+    # Compare the encodings
+    result = face_recognition.compare_faces([db_encoding], unknown_encoding, tolerance=tolerance)
     return result[0] if result else False
+

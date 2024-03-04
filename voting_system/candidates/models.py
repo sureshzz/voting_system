@@ -9,6 +9,7 @@ class candidates(models.Model):
     Address = models.CharField(max_length=128)
     Gender = models.CharField(max_length=128)
     Party = models.CharField(max_length=128)
+    Image = models.CharField(max_length=128)
 
 
 candidates_collection = db['candidates']

@@ -45,12 +45,19 @@ def adminlogin(request):
         data = json.loads(request.body)
         username = data.get('username')
         password = data.get('password')
+        print(username)
+        print(password)
+
 
         filter = {"username": username}
         document = admin_collection.find_one(filter)
-        dbpassword = document.get('password')
+        print(document)
+        if not document:
+            # dbpassword = document.get('password')
+            return JsonResponse({'error':'invalid input'},status = 210)
 
         if document:
+            dbpassword = document.get('password')
             authenticate = check_password(password,dbpassword)#return boolean value so
             if authenticate:
                 payload = {
@@ -69,25 +76,34 @@ def adminlogin(request):
     return JsonResponse({"error": "Method Not Allowed"}, status=405)
 
 # Create your views here.
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+import jwt
+from candidates.models import candidates_collection
+
 @csrf_exempt
 def deletecandidate(request):
     if request.method == 'POST':
-        received_token = request.headers.get('token')
-        decoded_token = jwt.decode(received_token,'suresh',algorithms=['HS256'])
-        validater = decoded_token['role']
         data = json.loads(request.body)
-        name = data.get('name')
-        filter = {'name': name}
+        received_token = data.get('token')
+        decoded_token = jwt.decode(received_token, 'suresh', algorithms=['HS256'])
+        validater = decoded_token['role']
+        print(validater)
+        Citizenshipnum = data.get('Citizenshipnum')
+        print(Citizenshipnum)
+        filter = {'Citizenshipnum': Citizenshipnum}
         if validater == 'admin':
             result = candidates_collection.delete_one(filter)
-            return JsonResponse("done")
-
-        if result.deleted_count == 1:
-            return JsonResponse({'message': 'Document deleted successfully.'})
+            if result.deleted_count == 1:
+                return JsonResponse({'message': 'Document deleted successfully.'})
+            else:
+                return JsonResponse({'error': 'Document not found or could not be deleted.'}, status=404)
         else:
-            return JsonResponse({'error': 'Document not found or could not be deleted.'}, status=404)
+            return JsonResponse({'error': 'Unauthorized access. Only admins can delete candidates.'}, status=403)
     else:
         return JsonResponse({'error': 'Task is not supported'}, status=405)
+
     
 @csrf_exempt
 def updatecandidate(request):
